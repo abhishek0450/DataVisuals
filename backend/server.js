@@ -2,6 +2,7 @@ import express from "express"
 import 'dotenv/config'
 import connectDB from "./database/db.js"
 import userRoute from "./routes/userRoute.js"
+import workspaceRoute from "./routes/workspaceRoute.js"
 import cors from 'cors'
 
 const app = express()
@@ -15,6 +16,7 @@ app.use(cors({
 }))
 
 app.use('/user', userRoute)
+app.use('/workspaces', workspaceRoute)
 
 app.listen(PORT,()=>{
     connectDB()
