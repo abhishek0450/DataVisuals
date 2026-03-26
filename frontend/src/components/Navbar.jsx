@@ -1,11 +1,13 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
-import { WorkspaceContext } from '../context/WorkspaceContext'
+import { useSelector, useDispatch } from 'react-redux'
+import { setDatasetForWorkspace } from '../store/workspaceSlice'
 
 const Navbar = () => {
   const navigate = useNavigate();
   const token = localStorage.getItem('token');
-  const { activeWorkspace, setDatasetForWorkspace } = useContext(WorkspaceContext);
+  const dispatch = useDispatch();
+  const activeWorkspace = useSelector(state => state.workspace.activeWorkspace);
   const [showDropdown, setShowDropdown] = useState(false);
 
   const handleLogout = () => {
@@ -23,15 +25,15 @@ const Navbar = () => {
             <Link to="/dashboard">Dashboard</Link>
           </li>
           <li className="relative">
-            <button onClick={() => setShowDropdown(!showDropdown)} className=" hover:text-blue-900">
-              Data Source
+            <button onClick={() => setShowDropdown(!showDropdown)} className="font-semibold text-gray-700 hover:text-blue-900">
+              Data Source {activeWorkspace && "▼"}
             </button>
             {showDropdown && activeWorkspace && (
               <div className="absolute top-8 w-48 left-0 mt-2 bg-white text-black rounded shadow-lg z-50 flex flex-col border border-gray-200">
-                <div onClick={() => { setDatasetForWorkspace(activeWorkspace, 'sample'); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm border-b">Sample Data</div>
-                <div onClick={() => { setDatasetForWorkspace(activeWorkspace, 'category'); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm border-b">Sales by Category</div>
-                <div onClick={() => { setDatasetForWorkspace(activeWorkspace, 'performance'); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm border-b">Sales Performance</div>
-                <div onClick={() => { setDatasetForWorkspace(activeWorkspace, 'revenue'); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm">Monthly Revenue</div>
+                <div onClick={() => { dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'sample'})); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm border-b">Sample Data</div>
+                <div onClick={() => { dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'category'})); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm border-b">Sales by Category</div>
+                <div onClick={() => { dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'performance'})); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm border-b">Sales Performance</div>
+                <div onClick={() => { dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'revenue'})); setShowDropdown(false); }} className="cursor-pointer hover:bg-gray-100 p-2 text-sm">Monthly Revenue</div>
               </div>
             )}
           </li>

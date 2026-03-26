@@ -1,5 +1,5 @@
-import { useContext } from "react"
-import { WorkspaceContext } from "../context/WorkspaceContext"
+import { useSelector, useDispatch } from "react-redux"
+import { setDatasetForWorkspace } from "../store/workspaceSlice"
 import { salesByCategory } from "../data/salesByCategory"
 import { salesPerformance } from "../data/salesPerformance"
 import { monthlyRevenue } from "../data/monthlyRevenue"
@@ -13,20 +13,24 @@ import {
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#AF19FF"]
 
-const Workspace = ({ chartType }) => {
-    const { activeWorkspace, datasetMap, setDatasetForWorkspace } = useContext(WorkspaceContext);
+const Workspace = () => {
+    const dispatch = useDispatch();
+    const activeWorkspace = useSelector(state => state.workspace.activeWorkspace);
+    const datasetMap = useSelector(state => state.workspace.datasetMap);
+    const chartMap = useSelector(state => state.workspace.chartMap);
 
     const selectedSource = datasetMap[activeWorkspace];
+    const chartType = chartMap[activeWorkspace] || "bar";
 
     if (!selectedSource) {
         return (
             <div className="flex-1 p-10 flex flex-col items-center justify-center min-h-[500px]">
                 <h2 className="text-2xl mb-6">Select Data Source</h2>
                 <div className="flex flex-wrap gap-4 justify-center">
-                    <button onClick={() => setDatasetForWorkspace(activeWorkspace, 'sample')} className="bg-white border-1 p-2">Sample Data</button>
-                    <button onClick={() => setDatasetForWorkspace(activeWorkspace, 'category')} className="bg-white border-1 p-2">Sales by Category</button>
-                    <button onClick={() => setDatasetForWorkspace(activeWorkspace, 'performance')} className="bg-white border-1 p-2">Sales Performance</button>
-                    <button onClick={() => setDatasetForWorkspace(activeWorkspace, 'revenue')} className="bg-white border-1 p-2">Monthly Revenue</button>
+                    <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'sample'}))} className="bg-white border-1 p-2 cursor-pointer hover:bg-gray-50">Sample Data</button>
+                    <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'category'}))} className="bg-white border-1 p-2 cursor-pointer hover:bg-gray-50">Sales by Category</button>
+                    <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'performance'}))} className="bg-white border-1 p-2 cursor-pointer hover:bg-gray-50">Sales Performance</button>
+                    <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'revenue'}))} className="bg-white border-1 p-2 cursor-pointer hover:bg-gray-50">Monthly Revenue</button>
                 </div>
             </div>
         )
