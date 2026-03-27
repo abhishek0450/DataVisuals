@@ -64,4 +64,25 @@ const getSingleWorkspace = async (req, res) => {
     }
 };
 
-export { createWorkspace, getUserWorkspaces, getSingleWorkspace };
+const deleteSingleWorkspace = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const userId = req.user.id;
+
+        const db = getDB();
+
+        const [rows] = await db.execute(
+            "DELETE FROM workspaces WHERE id = ? AND user_id = ?",
+            [id, userId]
+        );
+
+        if (rows.length === 0) return res.status(404).json({ message: "Workspace not found" });
+
+        res.json({ message: "Workspace deleted successfully" });
+
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+}
+
+export { createWorkspace, getUserWorkspaces, getSingleWorkspace, deleteSingleWorkspace };
