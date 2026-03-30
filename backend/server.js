@@ -3,6 +3,8 @@ import 'dotenv/config'
 import connectDB from "./database/db.js"
 import userRoute from "./routes/userRoute.js"
 import workspaceRoute from "./routes/workspaceRoute.js"
+import datasetRoute from "./routes/datasetRoutes.js"
+import chartRoute from "./routes/chartRoutes.js"
 import cors from 'cors'
 
 const app = express()
@@ -17,6 +19,8 @@ app.use(cors({
 
 app.use('/user', userRoute)
 app.use('/workspaces', workspaceRoute)
+app.use('/datasets', datasetRoute)
+app.use('/charts', chartRoute)
 
 app.listen(PORT,()=>{
     connectDB()

@@ -2,7 +2,11 @@ import { createSlice } from '@reduxjs/toolkit';
 
 const loadSavedMap = (key) => {
     const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : {};
+    if (saved) {
+        return JSON.parse(saved);
+    } else {
+        return {};
+    }
 };
 
 const workspaceSlice = createSlice({

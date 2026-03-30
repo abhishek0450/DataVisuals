@@ -25,6 +25,36 @@ const createTables = async () => {
             FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
         ) ENGINE=InnoDB;
     `);
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS datasets (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            user_id BIGINT UNSIGNED NOT NULL,
+            workspace_id BIGINT UNSIGNED NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            columns_schema JSON,
+            raw_data JSON,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+            FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB;
+    `);
+
+    await pool.query(`
+        CREATE TABLE IF NOT EXISTS charts (
+            id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+            workspace_id BIGINT UNSIGNED NOT NULL,
+            dataset_id BIGINT UNSIGNED NOT NULL,
+            name VARCHAR(255) NOT NULL,
+            type VARCHAR(50) NOT NULL,
+            config JSON,
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            FOREIGN KEY (workspace_id) REFERENCES workspaces(id) ON DELETE CASCADE,
+            FOREIGN KEY (dataset_id) REFERENCES datasets(id) ON DELETE CASCADE
+        ) ENGINE=InnoDB;
+    `);
 };
 
 const connectDB = async () => {
