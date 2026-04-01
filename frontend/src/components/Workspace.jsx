@@ -137,7 +137,7 @@ const Workspace = () => {
         return (
             <div className="flex-1 p-8 h-full overflow-y-auto bg-gray-50 flex flex-col">
                 <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Workspace Dashboard</h1>
+                    {/* <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Workspace Dashboard</h1> */}
                 </div>
 
                 {loadingDashboard ? (
@@ -170,7 +170,7 @@ const Workspace = () => {
                             const dataRaw = typeof chart.raw_data === 'string' ? JSON.parse(chart.raw_data) : chart.raw_data;
 
                             return (
-                                <div key={`chart-${chart.chart_id}`} className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col h-[400px] transition-all hover:shadow-xl hover:border-gray-200 group">
+                                <div key={`chart-${chart.chart_id}`} className="bg-white p-6 rounded-xl  border border-gray-100 flex flex-col h-[400px] shadow-sm group">
                                     <h3 className="text-xl font-bold text-gray-800 mb-2">{chart.chart_name}</h3>
                                     <div className="text-xs text-blue-500 font-medium tracking-wider uppercase mb-6 opacity-70">DATA: {chart.dataset_name}</div>
                                     <div className="flex-1 min-h-0 w-full">
@@ -256,7 +256,7 @@ const Workspace = () => {
                         onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: null }))}
                         className="px-4 py-2 bg-white text-gray-600 font-semibold rounded-xl hover:bg-gray-100 hover:text-gray-900 transition flex items-center gap-2 border border-gray-200 outline-none"
                     >
-                        <span>← Back to Dashboard</span>
+                        <span>Back </span>
                     </button>
                     <h1 className="text-2xl font-bold text-gray-900 ml-2">Previewing: <span className="text-blue-600 font-medium">{config.title}</span></h1>
                 </div>

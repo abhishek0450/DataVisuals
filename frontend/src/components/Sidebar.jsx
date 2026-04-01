@@ -8,7 +8,6 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
     const [newWorkspaceName, setNewWorkspaceName] = useState("");
     const [showInput, setShowInput] = useState(false);
 
-    // Dynamic datasets state
     const [datasets, setDatasets] = useState([]);
     const [isUploading, setIsUploading] = useState(false);
     const fileInputRef = useRef(null);
@@ -204,6 +203,47 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
                     </button>
                 )}
             </div>
+
+            <div className="mb-8">
+                <h2 className="text-xl font-bold mb-4">Datasets</h2>
+                <div className="flex flex-col gap-2 max-h-40 overflow-y-auto mb-4">
+                    {datasets.map(ds => {
+                        const isSelected = activeDataset === `ds_${ds.id}`;
+                        return (
+                            <div key={`ds-${ds.id}`} className="flex gap-1 group">
+                                <button
+                                    onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: `ds_${ds.id}` }))}
+                                    className={`flex-1 text-left w-full p-2 truncate rounded transition ${isSelected ? 'bg-blue-600 border border-blue-400' : 'bg-gray-700 hover:bg-gray-600'}`}
+                                    title={ds.name}
+                                >
+                                    {ds.name}
+                                </button>
+                                <button
+                                    onClick={(e) => handleDeleteDataset(e, ds.id)}
+                                    className="bg-red-500 p-2 rounded hover:bg-red-600 transition"
+                                    title="Delete Dataset"
+                                >
+                                    X
+                                </button>
+                            </div>
+                        );
+                    })}
+                    {/* {datasets.length === 0 && (
+                        <p className="text-gray-400 text-sm">No datasets here.</p>
+                    )} */}
+                </div>
+                <div className="flex flex-col gap-2">
+                    <input type="file" ref={fileInputRef} onChange={handleUpload} className="hidden" accept=".csv, .xlsx" />
+                    <button
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={!activeWorkspace || isUploading}
+                        className={`w-full bg-white  p-2 text-black text-sm rounded font-medium  ${(!activeWorkspace || isUploading) && 'opacity-50 cursor-not-allowed'}`}
+                    >
+                        {isUploading ? "Uploading..." : "Upload File (.csv/xlsx)"}
+                    </button>
+                </div>
+            </div>
+
 
 
             <div className="mt-auto">
