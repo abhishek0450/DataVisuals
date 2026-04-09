@@ -35,6 +35,22 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
             const data = await res.json();
             if (data && Array.isArray(data)) {
                 setWorkspaces(data);
+
+                // // ── Stale-user guard ──────────────────────────────────────────
+                // // The server always returns workspaces owned by the current user.
+                // // If Redux still holds a workspace ID that isn't in this list,
+                // // it means a previous user's state was never cleared on logout.
+                // // Forcing a reload destroys the Redux store and rebuilds it clean.
+                // if (activeWorkspace) {
+                //     const currentUserWorkspaceIds = data.map(ws => ws.id);
+                //     const isStaleWorkspace = !currentUserWorkspaceIds.includes(activeWorkspace);
+                //     if (isStaleWorkspace) {
+                //         window.location.reload();
+                //         return; // stop further execution while reload is pending
+                //     }
+                // }
+                // // ─────────────────────────────────────────────────────────────
+
                 if (data.length > 0 && !activeWorkspace) {
                     setActiveWorkspace(data[0].id);
                 }

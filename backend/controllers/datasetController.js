@@ -22,7 +22,7 @@ export const uploadDataset = async (req, res) => {
             return res.status(400).json({ success: false, message: 'Uploaded file is empty' });
         }
 
-        // Infer schema from first up to 10 rows
+        // Infer schema from rows
         const sampleRows = rawData.slice(0, 10);
         const schemaMap = {};
 
