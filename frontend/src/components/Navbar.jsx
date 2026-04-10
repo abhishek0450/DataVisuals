@@ -19,7 +19,7 @@ const Navbar = () => {
   return (
     <div className='fixed top-0 left-0 w-full z-50 bg-gray-200'>
       <div className='flex justify-between items-center p-4 bg-gray-200'>
-        <p className='text-xl text-red-900'><Link to='/' >Analytics</Link></p>
+        <p className='text-xl text-red-900 '><Link to='/' >Analytics</Link></p>
         <ul className='flex m-2 gap-4 items-center'>
           <li>
             <Link to="/dashboard">Dashboard</Link>

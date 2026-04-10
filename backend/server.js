@@ -10,19 +10,33 @@ import cors from 'cors'
 const app = express()
 
 const PORT = process.env.PORT || 8000
+const allowedOrigins = new Set([
+    process.env.CLIENT_URL,
+    'http://localhost:5173',
+    'http://localhost',
+    'http://localhost:80',
+    'http://127.0.0.1',
+    'http://127.0.0.1:80'
+].filter(Boolean))
 
 app.use(express.json())
 app.use(cors({
-    origin: process.env.CLIENT_URL || 'http://localhost:5173',
-    credentials:true
+    origin: (origin, callback) => {
+        if (!origin || allowedOrigins.has(origin)) {
+            return callback(null, true)
+        }
+
+        return callback(new Error('Not allowed by CORS'))
+    },
+    credentials: true
 }))
 
-app.use('/user', userRoute)
-app.use('/workspaces', workspaceRoute)
-app.use('/datasets', datasetRoute)
-app.use('/charts', chartRoute)
+app.use('/api/user', userRoute)
+app.use('/api/workspaces', workspaceRoute)
+app.use('/api/datasets', datasetRoute)
+app.use('/api/charts', chartRoute)
 
-app.listen(PORT,()=>{
+app.listen(PORT, () => {
     connectDB()
-    console.log(`Server is listening at port ${PORT}`);  
+    console.log(`Server is listening at port ${PORT}`);
 })
