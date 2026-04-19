@@ -135,44 +135,44 @@ const Workspace = () => {
     // ----- DASHBOARD VIEW (No Dataset Selected) -----
     if (!selectedSource) {
         return (
-            <div className="flex-1 p-8 h-full overflow-y-auto bg-gray-50 flex flex-col">
-                <div className="flex justify-between items-center mb-8">
+            <div className="scroll-soft flex h-full flex-1 flex-col overflow-y-auto p-7 md:p-8">
+                <div className="mb-8 flex items-center justify-between">
                     {/* <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Workspace Dashboard</h1> */}
                 </div>
 
                 {loadingDashboard ? (
-                    <div className="flex items-center justify-center flex-1">
-                        <h2 className="text-xl text-gray-500 animate-pulse font-medium">Loading Dashboard...</h2>
+                    <div className="flex flex-1 items-center justify-center">
+                        <h2 className="animate-pulse text-xl font-semibold text-slate-500">Loading Dashboard...</h2>
                     </div>
                 ) : savedCharts.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center bg-white p-16 rounded-2xl shadow-sm border border-gray-100 flex-1">
+                    <div className="soft-card flex flex-1 flex-col items-center justify-center p-12 md:p-16">
                         <div className="text-6xl mb-6 opacity-80 backdrop-blur"></div>
-                        <h2 className="text-2xl font-bold text-gray-800 mb-3 tracking-tight">Your Dashboard is Empty</h2>
-                        <p className="text-gray-500 mb-8 max-w-md text-center text-lg leading-relaxed">
+                        <h2 className="mb-3 text-2xl font-bold tracking-tight text-slate-900">Your Dashboard is Empty</h2>
+                        <p className="mb-8 max-w-md text-center text-base leading-relaxed text-slate-600 md:text-lg">
                             Start building your dashboard by uploading a dataset from the sidebar. Customize your axis mapping, and click <b>Add to Dashboard</b>.
                         </p>
 
-                        <div className="w-full border-t border-gray-100 my-8"></div>
+                        <div className="my-8 w-full border-t-2 border-[#d8cab4]"></div>
 
-                        <div className="text-sm tracking-wide text-gray-400 font-semibold uppercase mb-6">Or try sample data</div>
+                        <div className="mb-6 text-sm font-semibold uppercase tracking-wide text-slate-500">Or try sample data</div>
                         <div className="flex flex-wrap gap-4 justify-center w-full max-w-2xl px-4">
-                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'sample' }))} className="flex-1 bg-white border border-gray-200 py-3 px-4 text-sm font-semibold rounded-xl text-gray-700 hover:bg-gray-50 hover:shadow-md transition duration-200 hover:-translate-y-1">Sample Data</button>
-                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'category' }))} className="flex-1 bg-white border border-gray-200 py-3 px-4 text-sm font-semibold rounded-xl text-gray-700 hover:bg-gray-50 hover:shadow-md transition duration-200 hover:-translate-y-1">Sales by Category</button>
-                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'performance' }))} className="flex-1 bg-white border border-gray-200 py-3 px-4 text-sm font-semibold rounded-xl text-gray-700 hover:bg-gray-50 hover:shadow-md transition duration-200 hover:-translate-y-1">Sales Performance</button>
-                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'revenue' }))} className="flex-1 bg-white border border-gray-200 py-3 px-4 text-sm font-semibold rounded-xl text-gray-700 hover:bg-gray-50 hover:shadow-md transition duration-200 hover:-translate-y-1">Monthly Revenue</button>
+                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'sample' }))} className="flex-1 border border-[#c9b9a2] bg-[#fffdf8] px-4 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-1 hover:bg-[#f5eee3] hover:shadow-md">Sample Data</button>
+                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'category' }))} className="flex-1 border border-[#c9b9a2] bg-[#fffdf8] px-4 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-1 hover:bg-[#f5eee3] hover:shadow-md">Sales by Category</button>
+                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'performance' }))} className="flex-1 border border-[#c9b9a2] bg-[#fffdf8] px-4 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-1 hover:bg-[#f5eee3] hover:shadow-md">Sales Performance</button>
+                            <button onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: 'revenue' }))} className="flex-1 border border-[#c9b9a2] bg-[#fffdf8] px-4 py-3 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-1 hover:bg-[#f5eee3] hover:shadow-md">Monthly Revenue</button>
                         </div>
                     </div>
                 ) : (
-                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-2 gap-8 pb-10">
+                    <div className="grid grid-cols-1 gap-6 pb-8 md:grid-cols-2 xl:grid-cols-2">
                         {savedCharts.map(chart => {
                             const conf = typeof chart.config === 'string' ? JSON.parse(chart.config) : chart.config;
                             const type = chart.chart_type;
                             const dataRaw = typeof chart.raw_data === 'string' ? JSON.parse(chart.raw_data) : chart.raw_data;
 
                             return (
-                                <div key={`chart-${chart.chart_id}`} className="bg-white p-6 rounded-xl  border border-gray-100 flex flex-col h-[400px] shadow-sm group">
-                                    <h3 className="text-xl font-bold text-gray-800 mb-2">{chart.chart_name}</h3>
-                                    <div className="text-xs text-blue-500 font-medium tracking-wider uppercase mb-6 opacity-70">DATA: {chart.dataset_name}</div>
+                                <div key={`chart-${chart.chart_id}`} className="soft-card group flex h-[390px] flex-col p-6">
+                                    <h3 className="mb-2 truncate text-xl font-bold text-slate-900" title={chart.chart_name}>{chart.chart_name}</h3>
+                                    <div className="mb-6 text-xs font-semibold uppercase tracking-wider text-blue-700/80">Data: {chart.dataset_name}</div>
                                     <div className="flex-1 min-h-0 w-full">
                                         {/* DYNAMIC DASHBOARD CHARTS */}
                                         {type === 'bar' && (
@@ -180,9 +180,9 @@ const Workspace = () => {
                                                 <BarChart data={dataRaw}>
                                                     <XAxis dataKey={conf.xAxisKey} tick={{ fontSize: 12 }} />
                                                     <YAxis tick={{ fontSize: 12 }} />
-                                                    <Tooltip cursor={{ fill: '#f5f5f5' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                                    <Bar dataKey={conf.yAxisKey} fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                                                    <Brush dataKey={conf.xAxisKey} height={20} stroke="#3b82f6" fill="#f8fafc" travellerWidth={10} />
+                                                    <Tooltip cursor={{ fill: '#f2f6fc' }} contentStyle={{ borderRadius: '8px', border: '1px solid #d8e2f1', boxShadow: '0 14px 24px -18px rgb(0 0 0 / 0.35)' }} />
+                                                    <Bar dataKey={conf.yAxisKey} fill="#185adb" radius={[4, 4, 0, 0]} />
+                                                    <Brush dataKey={conf.xAxisKey} height={20} stroke="#185adb" fill="#f3f6fc" travellerWidth={10} />
                                                 </BarChart>
                                             </ResponsiveContainer>
                                         )}
@@ -191,9 +191,9 @@ const Workspace = () => {
                                                 <LineChart data={dataRaw}>
                                                     <XAxis dataKey={conf.xAxisKey} tick={{ fontSize: 12 }} />
                                                     <YAxis tick={{ fontSize: 12 }} />
-                                                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                                                    <Line type="monotone" dataKey={conf.yAxisKey} stroke="#10b981" strokeWidth={2} dot={dataRaw.length > 50 ? false : { r: 4 }} activeDot={{ r: 6 }} />
-                                                    <Brush dataKey={conf.xAxisKey} height={20} stroke="#10b981" fill="#f8fafc" travellerWidth={10} />
+                                                    <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #d8e2f1', boxShadow: '0 14px 24px -18px rgb(0 0 0 / 0.35)' }} />
+                                                    <Line type="monotone" dataKey={conf.yAxisKey} stroke="#0aa5a1" strokeWidth={2.5} dot={dataRaw.length > 50 ? false : { r: 4 }} activeDot={{ r: 6 }} />
+                                                    <Brush dataKey={conf.xAxisKey} height={20} stroke="#0aa5a1" fill="#f3f6fc" travellerWidth={10} />
                                                 </LineChart>
                                             </ResponsiveContainer>
                                         )}
@@ -203,7 +203,7 @@ const Workspace = () => {
                                                     <Pie data={dataRaw} dataKey={conf.yAxisKey} nameKey={conf.xAxisKey} cx="50%" cy="50%" innerRadius="50%" outerRadius="80%" paddingAngle={2} label>
                                                         {dataRaw.map((entry, index) => <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />)}
                                                     </Pie>
-                                                    <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                                                    <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #d8e2f1', boxShadow: '0 14px 24px -18px rgb(0 0 0 / 0.35)' }} />
                                                 </PieChart>
                                             </ResponsiveContainer>
                                         )}
@@ -219,7 +219,7 @@ const Workspace = () => {
 
     // ----- PREVIEW VIEW (Dataset is Selected) -----
     if (loadingDataset) {
-        return <div className="flex-1 p-10 flex items-center justify-center"><h2 className="text-xl text-gray-600 animate-pulse">Loading preview...</h2></div>;
+        return <div className="flex flex-1 items-center justify-center p-10"><h2 className="text-xl text-slate-600 animate-pulse">Loading preview...</h2></div>;
     }
 
     const getWorkspaceConfig = () => {
@@ -249,22 +249,22 @@ const Workspace = () => {
     const config = getWorkspaceConfig();
 
     return (
-        <div className="flex-1 p-8 h-full flex flex-col bg-gray-50/50">
-            <div className="flex justify-between items-center mb-8">
+        <div className="scroll-soft flex h-full flex-1 flex-col overflow-y-auto p-7 md:p-8">
+            <div className="mb-8 flex items-center justify-between">
                 <div className="flex items-center gap-4">
                     <button
                         onClick={() => dispatch(setDatasetForWorkspace({ workspaceId: activeWorkspace, datasetName: null }))}
-                        className="px-4 py-2 bg-white text-gray-600 font-semibold rounded-xl hover:bg-gray-100 hover:text-gray-900 transition flex items-center gap-2 border border-gray-200 outline-none"
+                        className="flex items-center gap-2 border border-[#c9b9a2] bg-[#fffdf8] px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-[#f5eee3] hover:text-slate-900"
                     >
                         <span>Back </span>
                     </button>
-                    <h1 className="text-2xl font-bold text-gray-900 ml-2">Previewing: <span className="text-blue-600 font-medium">{config.title}</span></h1>
+                    <h1 className="ml-2 text-2xl font-bold text-slate-900">Previewing: <span className="font-semibold text-blue-700">{config.title}</span></h1>
                 </div>
 
                 {dynamicData && selectedXAxis && selectedYAxis && (
                     <button
                         onClick={handlePinChart}
-                        className="px-6 py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl font-bold hover:shadow-lg hover:from-blue-700 hover:to-indigo-700 transition transform hover:-translate-y-[1px] active:translate-y-[1px] shadow-md flex items-center gap-2"
+                        className="brand-button flex items-center gap-2 px-6 py-2.5 font-bold shadow-md transition hover:-translate-y-[1px] hover:shadow-lg active:translate-y-[1px]"
                     >
                         Add to Dashboard
                     </button>
@@ -272,13 +272,13 @@ const Workspace = () => {
             </div>
 
             {dynamicData && (
-                <div className="flex items-center gap-6 mb-6 bg-white p-5 rounded-xl shadow-sm border border-gray-200">
+                <div className="soft-card mb-6 flex flex-wrap items-center gap-4 p-5 md:gap-6">
                     <div className="flex items-center gap-3">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">X-Axis</label>
+                        <label className="bg-[#f5eee3] px-2 py-1 text-xs font-bold uppercase tracking-widest text-slate-500">X-Axis</label>
                         <select
                             value={selectedXAxis}
                             onChange={e => setSelectedXAxis(e.target.value)}
-                            className="border-b-2 border-transparent hover:border-blue-300 py-1 font-semibold text-gray-800 text-sm focus:border-blue-600 outline-none transition bg-transparent cursor-pointer"
+                            className="cursor-pointer border-b-2 border-transparent bg-transparent py-1 text-sm font-semibold text-slate-800 transition hover:border-blue-300 focus:border-blue-600 focus:outline-none"
                         >
                             {(typeof dynamicData.columns_schema === 'string' ? JSON.parse(dynamicData.columns_schema) : dynamicData.columns_schema).map(col => (
                                 <option key={col.key} value={col.key}>{col.label}</option>
@@ -286,14 +286,14 @@ const Workspace = () => {
                         </select>
                     </div>
 
-                    <div className="h-6 w-px bg-gray-200"></div>
+                    <div className="hidden h-6 w-px bg-slate-200 md:block"></div>
 
                     <div className="flex items-center gap-3">
-                        <label className="text-xs font-bold text-gray-500 uppercase tracking-widest bg-gray-100 px-2 py-1 rounded">Y-Axis</label>
+                        <label className="bg-[#f5eee3] px-2 py-1 text-xs font-bold uppercase tracking-widest text-slate-500">Y-Axis</label>
                         <select
                             value={selectedYAxis}
                             onChange={e => setSelectedYAxis(e.target.value)}
-                            className="border-b-2 border-transparent hover:border-blue-300 py-1 font-semibold text-gray-800 text-sm focus:border-blue-600 outline-none transition bg-transparent cursor-pointer"
+                            className="cursor-pointer border-b-2 border-transparent bg-transparent py-1 text-sm font-semibold text-slate-800 transition hover:border-blue-300 focus:border-blue-600 focus:outline-none"
                         >
                             {(typeof dynamicData.columns_schema === 'string' ? JSON.parse(dynamicData.columns_schema) : dynamicData.columns_schema).map(col => (
                                 <option key={col.key} value={col.key}>{col.label}</option>
@@ -303,15 +303,15 @@ const Workspace = () => {
                 </div>
             )}
 
-            <div className="flex-1 min-h-0 bg-white p-6 rounded-2xl shadow-sm border border-gray-200">
+            <div className="soft-card min-h-0 flex-1 p-6">
                 {chartType === "bar" && (
                     <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={config.data}>
                             <XAxis dataKey={config.xAxisKey} tick={{ fontSize: 12 }} />
                             <YAxis tick={{ fontSize: 12 }} />
-                            <Tooltip cursor={{ fill: '#f5f5f5' }} contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                            <Bar dataKey={config.yAxisKey} fill="#3b82f6" radius={[4, 4, 0, 0]} />
-                            <Brush dataKey={config.xAxisKey} height={25} stroke="#3b82f6" fill="#f8fafc" travellerWidth={12} />
+                            <Tooltip cursor={{ fill: '#f2f6fc' }} contentStyle={{ borderRadius: '8px', border: '1px solid #d8e2f1', boxShadow: '0 14px 24px -18px rgb(0 0 0 / 0.35)' }} />
+                            <Bar dataKey={config.yAxisKey} fill="#185adb" radius={[4, 4, 0, 0]} />
+                            <Brush dataKey={config.xAxisKey} height={25} stroke="#185adb" fill="#f3f6fc" travellerWidth={12} />
                         </BarChart>
                     </ResponsiveContainer>
                 )}
@@ -321,9 +321,9 @@ const Workspace = () => {
                         <LineChart data={config.data}>
                             <XAxis dataKey={config.xAxisKey} tick={{ fontSize: 12 }} />
                             <YAxis tick={{ fontSize: 12 }} />
-                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
-                            <Line type="monotone" dataKey={config.yAxisKey} stroke="#10b981" strokeWidth={2} dot={config.data?.length > 50 ? false : { r: 4 }} activeDot={{ r: 6 }} />
-                            <Brush dataKey={config.xAxisKey} height={25} stroke="#10b981" fill="#f8fafc" travellerWidth={12} />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #d8e2f1', boxShadow: '0 14px 24px -18px rgb(0 0 0 / 0.35)' }} />
+                            <Line type="monotone" dataKey={config.yAxisKey} stroke="#0aa5a1" strokeWidth={2.5} dot={config.data?.length > 50 ? false : { r: 4 }} activeDot={{ r: 6 }} />
+                            <Brush dataKey={config.xAxisKey} height={25} stroke="#0aa5a1" fill="#f3f6fc" travellerWidth={12} />
                         </LineChart>
                     </ResponsiveContainer>
                 )}
@@ -346,7 +346,7 @@ const Workspace = () => {
                                     <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                                 ))}
                             </Pie>
-                            <Tooltip contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }} />
+                            <Tooltip contentStyle={{ borderRadius: '8px', border: '1px solid #d8e2f1', boxShadow: '0 14px 24px -18px rgb(0 0 0 / 0.35)' }} />
                         </PieChart>
                     </ResponsiveContainer>
                 )}

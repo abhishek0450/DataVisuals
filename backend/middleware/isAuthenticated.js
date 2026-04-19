@@ -1,15 +1,15 @@
 import jwt from 'jsonwebtoken'
 import { getDB } from '../database/db.js';
 
-export const isAuthenticated = async(req, res, next) =>{
+export const isAuthenticated = async (req, res, next) => {
     try {
         const db = getDB();
         const authHeader = req.headers.authorization;
 
-        if(!authHeader || !authHeader.startsWith('Bearer ')){
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
             return res.status(401).json({
-                success:false,
-                message:'Access token is missing or invalid'
+                success: false,
+                message: 'Access token is missing or invalid'
             })
         }
 
@@ -20,8 +20,8 @@ export const isAuthenticated = async(req, res, next) =>{
             decoded = jwt.verify(token, process.env.SECRET_KEY);
         } catch (err) {
             return res.status(401).json({
-                success:false,
-                message:"Token has expired or is invalid"
+                success: false,
+                message: "Token has expired or is invalid"
             })
         }
 
@@ -33,8 +33,8 @@ export const isAuthenticated = async(req, res, next) =>{
 
         if (users.length === 0) {
             return res.status(404).json({
-                success:false,
-                message:"user not found"
+                success: false,
+                message: "user not found"
             })
         }
 
@@ -43,8 +43,9 @@ export const isAuthenticated = async(req, res, next) =>{
         next()
     } catch (error) {
         return res.status(500).json({
-            success:false,
-            message:error.message
+            success: false,
+            message: error.message
         })
     }
 }
+

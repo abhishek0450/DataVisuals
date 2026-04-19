@@ -1,1 +1,131 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap');
 @import "tailwindcss";
+
+:root {
+	--bg: #ede7dc;
+	--bg-soft: #e5ddd0;
+	--surface: #fffdf8;
+	--surface-strong: #f7f1e6;
+	--text: #1b2735;
+	--muted: #596679;
+	--border: #c9b9a2;
+	--brand: #0e6758;
+	--brand-hover: #0a4f44;
+	--accent: #c4651f;
+	--danger: #ba2d2d;
+	--shadow-soft: 0 18px 34px -26px rgba(20, 32, 48, 0.45);
+	--shadow-pop: 0 20px 44px -30px rgba(20, 32, 48, 0.5);
+}
+
+* {
+	box-sizing: border-box;
+	border-radius: 0 !important;
+}
+
+body {
+	margin: 0;
+	min-height: 100vh;
+	font-family: 'IBM Plex Sans', sans-serif;
+	background:
+		linear-gradient(140deg, rgba(14, 103, 88, 0.09) 0%, rgba(196, 101, 31, 0.08) 32%, transparent 58%),
+		repeating-linear-gradient(0deg, rgba(255, 255, 255, 0.38) 0px, rgba(255, 255, 255, 0.38) 1px, transparent 1px, transparent 26px),
+		linear-gradient(180deg, #f2ece1 0%, var(--bg) 55%, #e6ddcf 100%);
+	color: var(--text);
+}
+
+#root {
+	min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+	margin: 0;
+	color: var(--text);
+	font-family: 'Space Grotesk', sans-serif;
+}
+
+p {
+	margin: 0;
+}
+
+.glass-panel {
+	background: rgba(255, 253, 248, 0.95);
+	border: 2px solid var(--border);
+	backdrop-filter: blur(6px);
+	box-shadow: var(--shadow-pop);
+}
+
+.soft-card {
+	background: var(--surface);
+	border: 2px solid var(--border);
+	box-shadow: var(--shadow-soft);
+}
+
+.panel-tint {
+	background:
+		repeating-linear-gradient(180deg, rgba(14, 103, 88, 0.04) 0px, rgba(14, 103, 88, 0.04) 1px, transparent 1px, transparent 30px),
+		linear-gradient(180deg, #fcf8ef 0%, #f5eee3 100%);
+}
+
+.scroll-soft {
+	scrollbar-width: thin;
+	scrollbar-color: #c1cee4 transparent;
+}
+
+.scroll-soft::-webkit-scrollbar {
+	width: 10px;
+	height: 10px;
+}
+
+.scroll-soft::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scroll-soft::-webkit-scrollbar-thumb {
+	background: #c1cee4;
+	border-radius: 999px;
+	border: 2px solid transparent;
+	background-clip: padding-box;
+}
+
+.scroll-soft::-webkit-scrollbar-thumb:hover {
+	background: #aebed8;
+	background-clip: padding-box;
+}
+
+.brand-button {
+	background: linear-gradient(135deg, var(--brand) 0%, #148770 100%);
+	border: 2px solid #08463b;
+	color: #ffffff;
+}
+
+.brand-button:hover {
+	background: linear-gradient(135deg, var(--brand-hover) 0%, #0d6a5a 100%);
+}
+
+.auth-shell {
+	background:
+		radial-gradient(circle at 12% 0%, rgba(14, 103, 88, 0.28), transparent 34%),
+		radial-gradient(circle at 92% 16%, rgba(196, 101, 31, 0.24), transparent 40%),
+		linear-gradient(180deg, #233447 0%, #2e4258 100%);
+}
+
+.fade-up {
+	animation: fadeUp 0.55s ease-out;
+}
+
+@keyframes fadeUp {
+	from {
+		opacity: 0;
+		transform: translateY(14px);
+	}
+
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}

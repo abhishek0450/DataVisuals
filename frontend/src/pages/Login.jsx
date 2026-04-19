@@ -33,49 +33,51 @@ const Login = () => {
   }
 
   return (
-    <section className="w-full min-h-screen flex bg-gray-800 items-center justify-center text-white">
-      <div className="max-w-md w-full px-6">
-        <h1 className="text-4xl font-bold mb-2 text-center">Login</h1>
+    <section className="auth-shell flex min-h-[calc(100vh-6rem)] w-full items-center justify-center px-6 py-10">
+      <div className="fade-up glass-panel w-full max-w-md border-2 px-7 py-9 md:px-9">
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.28em] text-orange-700">Welcome Back</p>
+        <h1 className="mb-2 text-4xl font-bold uppercase text-slate-900">Login</h1>
+        <p className="mb-7 text-sm text-slate-700">Sign in to continue building dashboards and managing datasets.</p>
 
-        {error && <div className="bg-red-500/20 text-red-500 p-3 mb-4 rounded border border-red-500/50">{error}</div>}
+        {error && <div className="mb-5 border border-red-400 bg-red-100 px-4 py-3 text-sm font-semibold text-red-800">{error}</div>}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-5">
           <div>
-            <label className="block text-sm font-semibold mb-2">Email</label>
+            <label className="mb-2 block text-sm font-semibold uppercase tracking-wide text-slate-700">Email</label>
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="Enter your email"
-              className="w-full px-4 py-3 border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+              className="w-full border border-[#c9b9a2] bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-teal-700 focus:outline-none"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-semibold mb-2">Password</label>
+            <label className="mb-2 block text-sm font-semibold uppercase tracking-wide text-slate-700">Password</label>
             <input
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="Enter your password"
-              className="w-full px-4 py-3 border border-gray-600 rounded bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:border-blue-500"
+              className="w-full border border-[#c9b9a2] bg-white px-4 py-3 text-slate-900 placeholder:text-slate-400 focus:border-teal-700 focus:outline-none"
               required
             />
           </div>
 
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-3 font-bold rounded hover:bg-blue-600 transition"
+            className="brand-button w-full py-3 font-bold uppercase shadow-lg transition hover:-translate-y-0.5"
           >
             Login
           </button>
         </form>
 
-        <p className="text-center text-gray-400 mt-6">
-          Don't have an account? <a href="/signup" className="text-blue-500 hover:text-blue-400">Sign up</a>
+        <p className="mt-6 text-center text-sm text-slate-600">
+          Don't have an account? <a href="/signup" className="font-semibold text-teal-800 hover:text-teal-900">Sign up</a>
           <br />
-          <a href="/forgot-password" className="text-blue-500 hover:text-blue-400">Forgot password</a>
+          <a href="/forgot-password" className="font-semibold text-teal-800 hover:text-teal-900">Forgot password</a>
         </p>
 
       </div>
