@@ -5,6 +5,7 @@ import { salesByCategory } from "../data/salesByCategory"
 import { salesPerformance } from "../data/salesPerformance"
 import { monthlyRevenue } from "../data/monthlyRevenue"
 import sampleData from "../data/sampleData"
+import { authFetch } from "../utils/authFetch"
 
 import {
     BarChart, Bar, XAxis, YAxis, Tooltip, Brush,
@@ -54,10 +55,7 @@ const Workspace = () => {
     const fetchDynamicDataset = async (id) => {
         setLoadingDataset(true);
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`/api/datasets/${id}`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const res = await authFetch(`/api/datasets/${id}`);
             const data = await res.json();
             if (data.success) {
                 setDynamicData(data.dataset);
@@ -77,10 +75,7 @@ const Workspace = () => {
     const fetchSavedCharts = async () => {
         setLoadingDashboard(true);
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`/api/charts/workspace/${activeWorkspace}`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const res = await authFetch(`/api/charts/workspace/${activeWorkspace}`);
             const data = await res.json();
             if (data.success) {
                 setSavedCharts(data.charts);
@@ -95,7 +90,6 @@ const Workspace = () => {
     const handlePinChart = async () => {
         if (!dynamicData) return;
         try {
-            const token = localStorage.getItem("token");
             const chartName = prompt("Enter a name for this pinned chart:", `${dynamicData.name} (${chartType})`);
             if (!chartName) return;
 
@@ -110,11 +104,10 @@ const Workspace = () => {
                 }
             };
 
-            const res = await fetch("/api/charts", {
+            const res = await authFetch("/api/charts", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify(payload)
             });

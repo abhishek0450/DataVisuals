@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { setAccessToken, setStoredUser } from '../utils/auth'
 
 const Login = () => {
   const [email, setEmail] = useState('')
@@ -15,14 +16,15 @@ const Login = () => {
       const response = await fetch('/api/user/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
         body: JSON.stringify({ email, password })
       })
 
       const data = await response.json()
 
       if (response.ok && data.success) {
-        localStorage.setItem('token', data.token)
-        localStorage.setItem('user', JSON.stringify(data.user))
+        setAccessToken(data.accessToken)
+        setStoredUser(data.user)
         navigate('/dashboard')
       } else {
         setError(data.message || 'Login failed')

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setDatasetForWorkspace } from "../store/workspaceSlice";
+import { authFetch } from "../utils/authFetch";
 
 const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
     const dispatch = useDispatch();
@@ -28,10 +29,7 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
 
     const fetchWorkspaces = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch("/api/workspaces", {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const res = await authFetch("/api/workspaces");
             const data = await res.json();
             if (data && Array.isArray(data)) {
                 setWorkspaces(data);
@@ -62,12 +60,10 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
     const handleCreateWorkspace = async () => {
         if (!newWorkspaceName.trim()) return;
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch("/api/workspaces", {
+            const res = await authFetch("/api/workspaces", {
                 method: "POST",
                 headers: {
-                    "Content-Type": "application/json",
-                    "Authorization": `Bearer ${token}`
+                    "Content-Type": "application/json"
                 },
                 body: JSON.stringify({ name: newWorkspaceName })
             });
@@ -86,10 +82,8 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
     const handleDeleteWorkspace = async (id) => {
         if (!confirm("delete this workspace?")) return;
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`/api/workspaces/${id}`, {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` }
+            const res = await authFetch(`/api/workspaces/${id}`, {
+                method: "DELETE"
             });
             if (res.ok) {
                 const newWorkspaces = workspaces.filter(ws => ws.id !== id);
@@ -105,10 +99,7 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
 
     const fetchDatasets = async () => {
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`/api/datasets/workspace/${activeWorkspace}`, {
-                headers: { "Authorization": `Bearer ${token}` }
-            });
+            const res = await authFetch(`/api/datasets/workspace/${activeWorkspace}`);
             const data = await res.json();
             if (data.success) {
                 setDatasets(data.datasets);
@@ -128,10 +119,8 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
 
         setIsUploading(true);
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch("/api/datasets/upload", {
+            const res = await authFetch("/api/datasets/upload", {
                 method: "POST",
-                headers: { "Authorization": `Bearer ${token}` },
                 body: formData
             });
             const data = await res.json();
@@ -158,10 +147,8 @@ const Sidebar = ({ setChartType, activeWorkspace, setActiveWorkspace }) => {
         if (!confirm("Are you sure you want to delete this dataset? This will also permanently remove any pinned charts using this dataset from your dashboard.")) return;
 
         try {
-            const token = localStorage.getItem("token");
-            const res = await fetch(`/api/datasets/${datasetId}`, {
-                method: "DELETE",
-                headers: { "Authorization": `Bearer ${token}` }
+            const res = await authFetch(`/api/datasets/${datasetId}`, {
+                method: "DELETE"
             });
             const data = await res.json();
             if (data.success) {

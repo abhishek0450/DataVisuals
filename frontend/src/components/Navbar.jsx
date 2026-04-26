@@ -2,17 +2,26 @@ import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { setDatasetForWorkspace } from '../store/workspaceSlice'
+import { clearAuthSession, hasAccessToken } from '../utils/auth'
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const token = localStorage.getItem('token');
+  const token = hasAccessToken();
   const dispatch = useDispatch();
   const activeWorkspace = useSelector(state => state.workspace.activeWorkspace);
   const [showDropdown, setShowDropdown] = useState(false);
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+  const handleLogout = async () => {
+    try {
+      await fetch('/api/user/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+    } catch (error) {
+      console.error('Logout request failed', error);
+    }
+
+    clearAuthSession();
     navigate('/login');
   };
 

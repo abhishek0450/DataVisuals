@@ -1,15 +1,23 @@
 import xlsx from 'xlsx';
 import fs from 'fs';
 import { getDB } from '../database/db.js';
+import { ownsWorkspace, parsePositiveInt } from '../helpers/authorization.js';
 
 export const uploadDataset = async (req, res) => {
     try {
-        const { workspace_id } = req.body;
+        const workspaceId = parsePositiveInt(req.body.workspace_id);
         const file = req.file;
+        const userId = req.userId;
 
-        if (!file || !workspace_id) {
+        if (!file || !workspaceId) {
             if (file) fs.unlinkSync(file.path);
-            return res.status(400).json({ success: false, message: 'File and workspace_id are required' });
+            return res.status(400).json({ success: false, message: 'File and valid workspace_id are required' });
+        }
+
+        const canAccessWorkspace = await ownsWorkspace(workspaceId, userId);
+        if (!canAccessWorkspace) {
+            fs.unlinkSync(file.path);
+            return res.status(404).json({ success: false, message: 'Workspace not found' });
         }
 
         // Parse file using xlsx
@@ -49,11 +57,10 @@ export const uploadDataset = async (req, res) => {
 
         // Connect to DB and Store
         const pool = getDB();
-        const userId = req.userId; // from isAuthenticated 
 
         const [result] = await pool.query(
             "INSERT INTO datasets (user_id, workspace_id, name, columns_schema, raw_data) VALUES (?, ?, ?, ?, ?)",
-            [userId, workspace_id, file.originalname, JSON.stringify(columnsSchema), JSON.stringify(rawData)]
+            [userId, workspaceId, file.originalname, JSON.stringify(columnsSchema), JSON.stringify(rawData)]
         );
 
         // Cleanup temp file
@@ -80,13 +87,24 @@ export const uploadDataset = async (req, res) => {
 
 export const getDatasets = async (req, res) => {
     try {
-        const { workspaceId } = req.params;
+        const workspaceId = parsePositiveInt(req.params.workspaceId);
+        const userId = req.userId;
+
+        if (!workspaceId) {
+            return res.status(400).json({ success: false, message: 'Invalid workspace id' });
+        }
+
+        const canAccessWorkspace = await ownsWorkspace(workspaceId, userId);
+        if (!canAccessWorkspace) {
+            return res.status(404).json({ success: false, message: 'Workspace not found' });
+        }
+
         const pool = getDB();
         
         // Fetch datasets without raw_data to save bandwidth for list view
         const [datasets] = await pool.query(
-            "SELECT id, name, columns_schema, created_at FROM datasets WHERE workspace_id = ?",
-            [workspaceId]
+            "SELECT id, name, columns_schema, created_at FROM datasets WHERE workspace_id = ? AND user_id = ?",
+            [workspaceId, userId]
         );
 
         res.status(200).json({ success: true, datasets });
@@ -98,12 +116,18 @@ export const getDatasets = async (req, res) => {
 
 export const getDatasetData = async (req, res) => {
     try {
-        const { id } = req.params;
+        const datasetId = parsePositiveInt(req.params.id);
+        const userId = req.userId;
+
+        if (!datasetId) {
+            return res.status(400).json({ success: false, message: 'Invalid dataset id' });
+        }
+
         const pool = getDB();
         
         const [datasets] = await pool.query(
-             "SELECT id, name, columns_schema, raw_data FROM datasets WHERE id = ?",
-            [id]
+             "SELECT id, name, columns_schema, raw_data FROM datasets WHERE id = ? AND user_id = ?",
+            [datasetId, userId]
         );
 
         if (datasets.length === 0) {
@@ -119,12 +143,16 @@ export const getDatasetData = async (req, res) => {
 
 export const deleteDataset = async (req, res) => {
     try {
-        const { id } = req.params;
+        const datasetId = parsePositiveInt(req.params.id);
+        if (!datasetId) {
+            return res.status(400).json({ success: false, message: 'Invalid dataset id' });
+        }
+
         const pool = getDB();
         
         const [result] = await pool.query(
             "DELETE FROM datasets WHERE id = ? AND user_id = ?",
-            [id, req.userId]
+            [datasetId, req.userId]
         );
 
         if (result.affectedRows === 0) {

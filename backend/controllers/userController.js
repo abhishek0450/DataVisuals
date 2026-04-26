@@ -2,6 +2,33 @@ import { getDB } from "../database/db.js";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
+const ACCESS_TOKEN_SECRET = process.env.ACCESS_TOKEN_SECRET || process.env.SECRET_KEY;
+const REFRESH_TOKEN_SECRET = process.env.REFRESH_TOKEN_SECRET || process.env.SECRET_KEY;
+const ACCESS_TOKEN_EXPIRES_IN = process.env.ACCESS_TOKEN_EXPIRES_IN || "15m";
+const REFRESH_TOKEN_EXPIRES_IN = process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
+const REFRESH_TOKEN_COOKIE = "refreshToken";
+const REFRESH_TOKEN_COOKIE_MAX_AGE_MS = Number(process.env.REFRESH_TOKEN_COOKIE_MAX_AGE_MS) || 7 * 24 * 60 * 60 * 1000;
+
+const getRefreshCookieOptions = () => ({
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    path: "/api/user",
+    maxAge: REFRESH_TOKEN_COOKIE_MAX_AGE_MS
+});
+
+const createAccessToken = (user) => jwt.sign(
+    { sub: user.id, email: user.email, type: "access" },
+    ACCESS_TOKEN_SECRET,
+    { expiresIn: ACCESS_TOKEN_EXPIRES_IN }
+);
+
+const createRefreshToken = (user) => jwt.sign(
+    { sub: user.id, type: "refresh" },
+    REFRESH_TOKEN_SECRET,
+    { expiresIn: REFRESH_TOKEN_EXPIRES_IN }
+);
+
 const sanitizeUser = (user) => ({
     id: user.id,
     username: user.username,
@@ -81,18 +108,21 @@ export const loginUser = async (req, res) => {
         
         const passwordCheck = await bcrypt.compare(password, user.password)
         if (!passwordCheck) {
-            return res.status(402).json({
+            return res.status(401).json({
                 success: false,
                 message: "Incorrect Password"
             })
         }
 
-        const token = jwt.sign({ id: user.id, email: user.email }, process.env.SECRET_KEY, { expiresIn: "10d" })
+        const accessToken = createAccessToken(user);
+        const refreshToken = createRefreshToken(user);
+
+        res.cookie(REFRESH_TOKEN_COOKIE, refreshToken, getRefreshCookieOptions());
 
         return res.status(200).json({
             success: true,
             message: `Welcome back ${user.username || user.email}`,
-            token,
+            accessToken,
             user: sanitizeUser(user)
         })
     } catch (error) {
@@ -103,8 +133,74 @@ export const loginUser = async (req, res) => {
     }
 }
 
+export const refreshAccessToken = async (req, res) => {
+    try {
+        const db = getDB();
+        const incomingRefreshToken = req.cookies?.[REFRESH_TOKEN_COOKIE];
+
+        if (!incomingRefreshToken) {
+            return res.status(401).json({
+                success: false,
+                code: "REFRESH_TOKEN_MISSING",
+                message: "Refresh token is missing"
+            });
+        }
+
+        let decoded;
+        try {
+            decoded = jwt.verify(incomingRefreshToken, REFRESH_TOKEN_SECRET);
+        } catch (error) {
+            return res.status(401).json({
+                success: false,
+                code: "INVALID_REFRESH_TOKEN",
+                message: "Refresh token is invalid or expired"
+            });
+        }
+
+        if (decoded.type !== "refresh") {
+            return res.status(401).json({
+                success: false,
+                code: "INVALID_REFRESH_TOKEN",
+                message: "Refresh token is invalid"
+            });
+        }
+
+        const [userRows] = await db.execute(
+            "SELECT id, username, email, avatar FROM users WHERE id = ? LIMIT 1",
+            [decoded.sub]
+        );
+
+        if (userRows.length === 0) {
+            return res.status(401).json({
+                success: false,
+                code: "INVALID_REFRESH_TOKEN",
+                message: "User no longer exists"
+            });
+        }
+
+        const user = userRows[0];
+        const accessToken = createAccessToken(user);
+        const nextRefreshToken = createRefreshToken(user);
+
+        res.cookie(REFRESH_TOKEN_COOKIE, nextRefreshToken, getRefreshCookieOptions());
+
+        return res.status(200).json({
+            success: true,
+            accessToken,
+            user: sanitizeUser(user)
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: error.message
+        });
+    }
+}
+
 export const logoutUser = async (req, res) => {
     try {
+        res.clearCookie(REFRESH_TOKEN_COOKIE, getRefreshCookieOptions());
+
         return res.status(200).json({
             success: true,
             message: "Logged out successfully"

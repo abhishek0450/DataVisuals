@@ -6,6 +6,7 @@ import workspaceRoute from "./routes/workspaceRoute.js"
 import datasetRoute from "./routes/datasetRoutes.js"
 import chartRoute from "./routes/chartRoutes.js"
 import cors from 'cors'
+import cookieParser from "cookie-parser"
 
 const app = express()
 
@@ -20,6 +21,7 @@ const allowedOrigins = new Set([
 ].filter(Boolean))
 
 app.use(express.json())
+app.use(cookieParser())
 app.use(cors({
     origin: (origin, callback) => {
         if (!origin || allowedOrigins.has(origin)) {
